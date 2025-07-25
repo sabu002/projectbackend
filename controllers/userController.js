@@ -9,7 +9,7 @@ import jwt from 'jsonwebtoken'
 
 export const register =async(req,res)=>{
     try{
-        const {name,email,password}=req.body
+        const {name,email,password,role}=req.body
    if(!name || !email || !password){
     return res.json({success:false,message:"Missing details"})
    }
@@ -18,14 +18,14 @@ export const register =async(req,res)=>{
      return res.json({success:false,message:"User already exist"})
     const hashedPassword = await bcrypt.hash(password,10)
     const user = await User.create({name,email,password:hashedPassword})
-    const token = jwt.sign({id:user._id}, process.env.JWT_SECRET,{expiresIn:'7d'})
+    const token = jwt.sign({id:user._id,role:user.role}, process.env.JWT_SECRET,{expiresIn:'7d'})
     res.cookie('token',token,{
         httpOnly:true, //prevent javascript to access cookie
          secure:process.env.NODE_ENV==="production",//use secure cookies in production
          sameSite : process.env.NODE_ENV ===" production"?"none":"strict", 
          maxAge:7*24*60*60*1000, //cookies expiration time
     }) 
-    return  res.json({success:true,user:{email:user.email ,name:user.name}})
+    return  res.json({success:true,user:{email:user.email ,name:user.name,role:user.role}})
     }catch(error){
         console.log(error.message)
         res.json({success:false,message:error.message})

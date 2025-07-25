@@ -47,13 +47,19 @@ try{
 
 }
 //change product in stock :api/product/stock
-export const changeStock = async (req,res)=>{
-try{
-const{id,inStock}=req.body
-  await Product.findByIdAndUpdate(id,{inStock})
-  res.json({ success:true,message:"stock updated"})
-}catch(error){
-   console.log(error.message)
-  res.json({success: false, message:error.message})
-}
+// Update stock by a given amount (positive or negative)
+export const changeStock = async (req, res) => {
+  try {
+    const { id, amount } = req.body; // amount can be positive (add) or negative (subtract)
+    const product = await Product.findById(id);
+    if (!product) return res.json({ success: false, message: 'Product not found' });
+    const newStock = (product.inStock || 0) + Number(amount);
+    if (newStock < 0) return res.json({ success: false, message: 'Not enough stock' });
+    product.inStock = newStock;
+    await product.save();
+    res.json({ success: true, message: 'Stock updated', inStock: product.inStock });
+  } catch (error) {
+    console.log(error.message);
+    res.json({ success: false, message: error.message });
+  }
 }
