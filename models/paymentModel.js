@@ -1,26 +1,33 @@
 import mongoose from "mongoose";
 const transactionSchema = new mongoose.Schema(
   {
+    transactionId:{
+      type:String,
+      unique: true,
+      required: true,
+      
+    },
     customerEmail: {
       type: String,
-      required: true,
+      
     },
     customerName: {
       type: String,
-      required: true,
+     
     },
     paymentGateway: {
       type: String,
-      required: true,
-      enum: ["esewa", "khalti"],
+      
+      enum: ["esewa"],
     },
     productId: {
       type: String,
-      required: true,
+      required:true
+     
     },
     productName: {
       type: String,
-      required: true,
+      
     },
     amount: {
       type: Number,
@@ -29,7 +36,7 @@ const transactionSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      required: true,
+      
       enum: ["PENDING", "COMPLETED", "FAILED", "REFUNDED"],
       default: "PENDING",
     },
